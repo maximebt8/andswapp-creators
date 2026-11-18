@@ -140,7 +140,7 @@ const totals = computed(() => {
   const upcoming = sum(list.filter((c) => !live(c) && c.status !== 'offered'), (c) => c.money.fixed + c.money.boost)
   return { paid, pending, upcoming, signups: sum(list, (c) => c.signups), waitlist: sum(list, (c) => c.waitlist), currency: list[0]?.currency ?? 'GBP' }
 })
-const personalLink = computed(() => (me.value?.code ? `https://andswapp.com/?c=${me.value.code}` : ''))
+const personalLink = computed(() => (me.value?.code ? `https://alumni.andswapp.com/en?utm_source=${encodeURIComponent(me.value.code)}&utm_medium=influence&utm_campaign=createurs_londres` : ''))
 
 const nav = computed(() => [
   { key: 'home', label: 'Dashboard', to: base.value, icon: ICONS.home },

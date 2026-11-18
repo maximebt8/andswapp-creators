@@ -136,7 +136,7 @@ const isVideo = (key) => /\.(mp4|mov|webm|m4v)$/i.test(key ?? '')
         <section class="card-soft">
           <p class="label-soft">Son espace</p>
           <p class="mt-1 break-all text-[13px]"><a :href="data.link" target="_blank" rel="noopener" class="text-green-dark underline">{{ data.link }}</a></p>
-          <p class="mt-2 text-[13px] text-gray-500">{{ k?.email }}<span v-if="k?.city"> · {{ k.city }}</span><span v-if="k?.code"> · ?c={{ k.code }}</span><span v-if="k?.last_seen"> · vue le {{ day(k.last_seen) }}</span></p>
+          <p class="mt-2 text-[13px] text-gray-500">{{ k?.email }}<span v-if="k?.city"> · {{ k.city }}</span><span v-if="k?.code"> · utm_source={{ k.code }}</span><span v-if="k?.last_seen"> · vue le {{ day(k.last_seen) }}</span></p>
           <p v-if="k?.notes" class="mt-2 whitespace-pre-wrap text-[13px] text-gray-600">{{ k.notes }}</p>
         </section>
         <section class="card-soft">

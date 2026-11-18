@@ -174,7 +174,7 @@ const day = (iso) => (iso ? new Date(iso).toLocaleDateString('fr-FR', { day: 'nu
             <p class="font-semibold">{{ k.name }} <span v-if="k.handle" class="font-normal text-gray-500">@{{ k.handle }}</span></p>
             <p class="text-[12px] text-gray-500">{{ k.email }} · {{ k.city }} · {{ k.status }}<span v-if="k.last_seen"> · vue le {{ day(k.last_seen) }}</span><span v-if="k.has_payout"> · RIB ok</span></p>
           </div>
-          <span v-if="k.code" class="pill bg-base-200 text-gray-700">?c={{ k.code }}</span>
+          <span v-if="k.code" class="pill bg-base-200 text-gray-700">utm_source={{ k.code }}</span>
           <button class="text-[13px] text-green-dark underline" @click="copy(data.links[k.id])">Copier son lien</button>
           <button class="text-[13px] text-green-dark underline" @click="offer(k.id)">Nouvelle offre</button>
         </div>

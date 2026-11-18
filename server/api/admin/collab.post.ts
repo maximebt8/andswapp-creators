@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
     .bind(creatorId, f.title, 'offered', f.currency, f.fixed_amount, f.boost_pct, f.per_signup, f.per_waitlist, f.cap_variable, f.deliverables, f.brief, f.deadline, now())
     .run()
   const newId = Number(result.meta.last_row_id)
-  const link = await creatorLink(env, creator.id)
+  const link = await creatorLink(env, creator)
   const first = creator.name.split(' ')[0]
   const variable = f.per_signup ? `, plus ${money(f.per_signup, f.currency)} per London > Paris sign-up through your link${f.per_waitlist ? ` (${money(f.per_waitlist, f.currency)} per waitlist sign-up)` : ''}${f.cap_variable ? `, capped at ${money(f.cap_variable, f.currency)}` : ''}` : ''
   const boost = f.boost_pct ? ` and +${f.boost_pct}% for 30 days of paid usage` : ''

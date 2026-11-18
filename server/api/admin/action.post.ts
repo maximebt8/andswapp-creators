@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
   const creator = await env.DB.prepare('SELECT * FROM creators WHERE id = ?1').bind(collab.creator_id).first<CreatorRow>()
   if (!creator) throw createError({ statusCode: 404, statusMessage: 'no such creator' })
   const first = creator.name.split(' ')[0]
-  const link = await creatorLink(env, creator.id)
+  const link = await creatorLink(env, creator)
   const ids = { creator: creator.id, collab: collab.id }
   const action = String(body.action ?? '')
 

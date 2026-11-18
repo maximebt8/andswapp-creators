@@ -4,12 +4,12 @@ import { payout } from '../../../shared/utils/collab'
 export default defineEventHandler(async (event) => {
   const env = requireAdmin(event)
   const [creators, collabs, outbox] = await Promise.all([
-    env.DB.prepare('SELECT id, name, handle, email, city, lang, code, status, invoice_mode, notes, created_at, last_seen, payout_name, (payout_details IS NOT NULL) AS has_payout FROM creators ORDER BY id DESC').all<any>(),
+    env.DB.prepare('SELECT id, name, handle, email, city, lang, code, status, invoice_mode, notes, created_at, last_seen, payout_name, (payout_details IS NOT NULL) AS has_payout, link_token FROM creators ORDER BY id DESC').all<any>(),
     env.DB.prepare('SELECT * FROM collabs ORDER BY id DESC').all<CollabRow>(),
     env.DB.prepare("SELECT o.*, c.name AS creator_name FROM outbox o LEFT JOIN creators c ON c.id = o.creator_id WHERE o.status = 'held' ORDER BY o.id DESC").all<any>(),
   ])
   const links: Record<number, string> = {}
-  for (const creator of creators.results ?? []) links[creator.id] = await creatorLink(env, creator.id)
+  for (const creator of creators.results ?? []) links[creator.id] = await creatorLink(env, creator)
   const rows = (collabs.results ?? []).map((row) => ({ ...row, money: payout(row) }))
   const due = rows.filter((c) => ['published', 'invoiced'].includes(c.status)).reduce((sum, c) => sum + c.money.total, 0)
   const paid = rows.filter((c) => c.status === 'paid').reduce((sum, c) => sum + (c.paid_amount ?? c.money.total), 0)
