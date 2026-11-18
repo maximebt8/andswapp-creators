@@ -1,0 +1,121 @@
+@layer components {
+
+  /* Styles communs à toutes les variantes de boutons */
+  .btn-swapp,
+  .btn-swapp-accent,
+  .btn-swapp-white,
+  .btn-swapp-ghost {
+    @apply inline-flex items-center justify-center gap-2 cursor-pointer
+           px-8 py-3.5 rounded-full
+           font-semibold text-base
+           transition-all
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Bouton principal — fond vert foncé */
+  /* Utilisé dans : index.vue, comment-ca-marche.vue, contact.vue, a-propos.vue, conseils-echange.vue */
+  .btn-swapp {
+    @apply bg-green-dark text-white hover:opacity-90 hover:shadow-lg;
+  }
+
+  /* Bouton accent — fond jaune */
+  /* Utilisé dans : index.vue hero, comment-ca-marche.vue CTA, temoignages.vue */
+  .btn-swapp-accent {
+    @apply bg-yellow text-green-dark hover:shadow-xl;
+  }
+
+  /* Bouton blanc plein (sur fond sombre) */
+  /* Utilisé dans : index.vue CTA, a-propos.vue CTA */
+  .btn-swapp-white {
+    @apply bg-white text-green-dark border border-gray-200 hover:shadow-xl;
+  }
+
+  /* Bouton fantôme blanc — fond semi-transparent (sur fond sombre) */
+  /* Utilisé dans : index.vue hero, temoignages.vue */
+  .btn-swapp-ghost {
+    @apply bg-white/10 backdrop-blur-sm border border-white/30 text-white hover:bg-white/20;
+  }
+
+  /* Modificateur taille large */
+  .btn-swapp-lg {
+    @apply px-10 py-4;
+  }
+
+  /* Modificateur plein largeur (formulaires) */
+  .btn-swapp-full {
+    @apply w-full justify-center;
+  }
+
+  /*
+   * Dashboard — boutons compacts dans les cartes (Profile, etc.)
+   * Base + une variante obligatoire : outline | outline-bright | accent
+   */
+  .btn-dashboard {
+    @apply inline-flex items-center justify-center gap-1.5
+           text-[11px] font-semibold
+           rounded-xl px-3 py-[5px]
+           border-2 border-transparent
+           cursor-pointer transition-all duration-200
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Bordure neutre, hover vert */
+  .btn-dashboard-outline {
+    @apply text-gray-700 bg-transparent border-gray-200
+           hover:border-green-light hover:text-green-dark hover:-translate-y-px;
+  }
+
+  /* Bordure green-bright (CTA « vide »), hover fond léger */
+  .btn-dashboard-outline-bright {
+    @apply text-gray-700 bg-transparent border-green-bright
+           hover:bg-green-light/20 hover:-translate-y-px;
+  }
+
+  /* Fond jaune, texte foncé, jaune assombri au survol */
+  .btn-dashboard-accent {
+    @apply bg-yellow text-gray-900
+           hover:brightness-[0.92] hover:-translate-y-px;
+  }
+
+  .btn-dashboard-success {
+    @apply bg-green-light/10 text-green-dark
+           hover:brightness-[0.92] hover:-translate-y-px;
+  }
+
+  /* Taille confortable pour actions dans une ligne (ex. Vérifier) */
+  .btn-dashboard-md {
+    @apply text-sm px-4 py-2;
+  }
+
+  /* Action secondaire inline — modales, champs (ex. dates différées) */
+/* Ligne cliquable pleine largeur, discrète (ex. « Comment fonctionnent les Swapps ? ») */
+.btn-swapp-row {
+  @apply w-full px-3 py-2 flex items-center gap-2
+         text-left text-sm font-semibold text-green-dark
+         bg-green-light/20 hover:bg-green-light/30
+         rounded-lg transition-colors cursor-pointer;
+}
+
+.btn-swapp-subtle {
+  @apply inline-flex items-center gap-1.5
+         text-sm font-medium text-gray-600
+         border border-gray-200 rounded-full px-3 py-1.5
+         bg-transparent cursor-pointer transition-colors
+         hover:bg-gray-50
+         disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+/* Variante sans bordure — bouton texte (ex. « Retour » onboarding) */
+.btn-swapp-subtle-plain {
+  @apply inline-flex items-center gap-1.5
+         text-sm font-semibold text-gray-500
+         bg-transparent border-0 cursor-pointer transition-colors
+         hover:text-green-dark
+         disabled:text-gray-300 disabled:cursor-not-allowed;
+}
+
+/* Bouton de fermeture rond (✕) — drawers + modales. Ajouter `btn-ghost` pour la variante transparente. */
+.btn-close {
+  @apply btn btn-circle md:btn-sm flex-shrink-0;
+}
+}

@@ -1,0 +1,19 @@
+# Espace créateurs &Swapp : projet Pages « andswapp-creators », base D1 et bucket R2 à part (créés le 18/11/2026).
+# Déploiement : workflow GitHub mise-en-ligne (ou npm run deploy à la main).
+name = "andswapp-creators"
+compatibility_date = "2026-09-01"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "dist"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "andswapp-creators"
+database_id = "446eaa45-373c-44b3-b6c8-fd045861072e"
+
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "andswapp-creators-media"
+
+[vars]
+MAX_EMAIL = "maxime.barret@andswapp.com"
+SITE_URL = "https://creators.andswapp.com"

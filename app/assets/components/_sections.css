@@ -1,0 +1,30 @@
+@layer components {
+
+  /* Styles communs aux variantes hero */
+  /* .section-hero utilisé dans : comment-ca-marche.vue, contact.vue, faq.vue, conseils-echange.vue, temoignages.vue */
+  .section-hero,
+  .section-hero-decorated {
+    @apply bg-gradient-to-br from-green-dark via-green-dark to-green-light
+           text-white py-16 md:py-24;
+  }
+
+  /* Hero avec décoration (cercles flous) */
+  /* Utilisé dans : index.vue, contact.vue, conseils-echange.vue */
+  .section-hero-decorated {
+    @apply relative overflow-hidden;
+  }
+
+  /* Section CTA finale (fond vert foncé) */
+  /* Utilisé dans : index.vue, a-propos.vue, temoignages.vue */
+  .section-cta-dark {
+    @apply bg-gradient-to-br from-green-dark to-green-dark/90
+           text-white py-16 md:py-20;
+  }
+
+  /* Overlay gradient sur image de card */
+  /* Utilisé dans : index.vue cards image, conseils-echange.vue */
+  .card-img-overlay {
+    @apply absolute inset-0 bg-gradient-to-t from-black/50 to-transparent;
+  }
+
+}

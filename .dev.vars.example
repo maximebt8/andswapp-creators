@@ -1,0 +1,5 @@
+# Copier en .dev.vars (jamais versionné). En prod, les mêmes clés vivent dans Cloudflare Pages (Settings, Variables).
+ADMIN_KEY=change-me
+BREVO_API_KEY=
+MAX_EMAIL=maxoubarret@gmail.com
+SITE_URL=http://localhost:4705

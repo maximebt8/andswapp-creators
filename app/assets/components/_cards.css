@@ -1,0 +1,219 @@
+@layer components {
+
+  /* -------------------------------------------------------------------------
+   * Swapp card system — Dashboard + pages publiques
+   * Conteneur : .swapp-card + modificateurs chaînés (elevated, bordered, …) et BEM (--bg-green, --bg-accent)
+   * Structure : .swapp-card-header, .swapp-card-body, …
+   * ------------------------------------------------------------------------- */
+
+  .swapp-card {
+    @apply bg-white rounded-2xl overflow-hidden border border-gray-200;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.03);
+  }
+
+  .swapp-card.elevated {
+    @apply border-0 shadow-xl;
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  }
+
+  .swapp-card.bordered {
+    @apply border-2 border-green-dark shadow-lg;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+
+  .swapp-card.bordered.accent {
+    @apply border-yellow;
+  }
+
+  .swapp-card.bordered.left {
+    @apply border-0 border-l-3 shadow-none;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.03);
+  }
+
+    .swapp-card.bordered.left.active {
+    @apply border-l-success;
+  }
+
+   .swapp-card.bordered.left.draft {
+    @apply border-l-gray-200;
+  }
+
+  .swapp-card.bordered.left.accent {
+    @apply border-l-yellow;
+  }
+
+  .swapp-card--success {
+    @apply bg-green-light/10;
+  }
+
+  .swapp-card--warning {
+    @apply bg-yellow/10;
+  }
+
+  .swapp-card-header {
+    @apply flex items-center justify-between px-[18px] py-[14px];
+  }
+
+  .swapp-card-header.stacked {
+    @apply items-center gap-4 pt-[18px] pb-4 border-b border-gray-100;
+  }
+
+  .swapp-card-heading {
+    @apply font-bold text-gray-900 leading-snug;
+  }
+
+  .swapp-card-body {
+    @apply px-[18px] py-4;
+  }
+
+  .swapp-card-body.lg {
+    @apply p-6 md:p-8;
+  }
+
+  /* Barre de progression par étapes — partagée (ExperienceFormModal, onboarding) */
+  .swapp-step-progress {
+    @apply flex gap-3;
+  }
+
+  .swapp-step-progress--tight {
+    @apply gap-1;
+  }
+
+  .swapp-step-segment {
+    @apply flex-1 h-1 rounded-full bg-gray-200 transition-colors;
+  }
+
+  .swapp-step-segment--done {
+    @apply bg-green-bright;
+  }
+
+  .swapp-step-segment--current {
+    @apply bg-green-dark;
+  }
+
+  /* Modale Modifier le projet */
+  .swapp-edit-field {
+    @apply flex items-start justify-between gap-3 w-full text-left px-4 py-3.5
+           hover:bg-gray-50/80 transition-colors border-b border-gray-100;
+  }
+
+  .swapp-edit-field--exchange {
+    @apply items-start cursor-default hover:bg-white;
+  }
+
+  .swapp-edit-field-body {
+    @apply min-w-0 flex-1;
+  }
+
+  .swapp-edit-field-value {
+    @apply block text-sm font-medium cursor-pointer leading-snug;
+  }
+
+  .swapp-edit-field-value--muted {
+    @apply font-medium text-gray-600;
+  }
+
+  .swapp-edit-field-emoji {
+    @apply mr-0.5;
+  }
+
+  .swapp-edit-field-icon,
+  .swapp-edit-field-chevron {
+    @apply shrink-0 text-gray-400 mt-4;
+  }
+
+  .swapp-edit-field-chevron {
+    @apply text-xl font-light leading-none;
+  }
+
+  /* Comment ça marche — accordion (Dashboard/Swapps.vue) */
+  .swapp-hiw-accordion {
+    @apply mt-4 overflow-hidden rounded-xl border border-gray-200 bg-white;
+  }
+
+  .swapp-hiw-summary {
+    @apply flex cursor-pointer list-none items-center justify-between gap-2
+           bg-base-200 px-4 py-3.5 text-sm font-semibold text-gray-700 select-none;
+  }
+
+  .swapp-hiw-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .swapp-hiw-summary-caret {
+    @apply flex h-7 w-7 shrink-0 items-center justify-center rounded-lg
+           border border-gray-200 bg-white text-gray-500 transition-transform duration-200;
+  }
+
+  .swapp-hiw-accordion[open] .swapp-hiw-summary-caret {
+    transform: rotate(180deg);
+  }
+
+  .swapp-hiw-body {
+    @apply border-t border-gray-100;
+  }
+
+  .swapp-hiw-row {
+    @apply flex items-start gap-3 border-t border-gray-100 px-[18px] py-3 first:border-t-0;
+  }
+
+  .swapp-hiw-row-icon {
+    @apply mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-green-dark/10 text-green-dark;
+  }
+
+  .swapp-hiw-row-label {
+    @apply m-0 text-[13px] font-semibold leading-snug text-gray-900;
+  }
+
+  .swapp-hiw-row-sub {
+    @apply mt-0.5 text-xs leading-snug text-gray-500;
+  }
+
+  .swapp-hiw-link {
+    @apply font-semibold text-green-dark underline decoration-transparent underline-offset-2
+           transition-[text-decoration-color] hover:decoration-green-dark;
+  }
+
+  .swapp-hiw-footer {
+    @apply border-t border-gray-100 px-[18px] py-3 text-xs italic leading-normal text-gray-400;
+  }
+
+  .swapp-collapse {
+    @apply border border-base-300 rounded-lg;
+  }
+
+  .swapp-collapse-title {
+    @apply flex items-center gap-3 font-medium;
+  }
+
+  /* -------------------------------------------------------------------------
+   * Panneau flottant — barre de recherche (overlay mobile + panneau desktop)
+   * ------------------------------------------------------------------------- */
+  .swapp-panel {
+    @apply bg-base-100 text-base-content border border-base-200 rounded-3xl shadow-lg;
+  }
+
+  /*
+  @apply absolute top-full mt-3 z-30 overflow-hidden p-5
+           max-h-[calc(100vh-14rem)] max-w-[calc(100vw-2rem)];
+  */
+  .swapp-panel--floating {
+    @apply absolute top-full mt-3 z-30 overflow-hidden p-5;
+  }
+
+  .swapp-panel--left {
+    @apply md:left-0 md:w-[30rem];
+  }
+
+  .swapp-panel--center {
+    @apply md:left-1/2 md:-translate-x-1/2 md:w-[30rem];
+  }
+
+  .swapp-panel--right {
+    @apply md:right-0 md:w-[32rem];
+  }
+
+  .swapp-panel--right-wide {
+    @apply md:right-0 md:w-[40rem];
+  }
+}
