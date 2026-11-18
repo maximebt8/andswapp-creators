@@ -2,7 +2,7 @@
 
 L'espace créateurs &Swapp (creators.andswapp.com) : une plateforme interne pour gérer les créatrices et créateurs de contenu avec qui &Swapp travaille, sur le modèle des outils du marché (Impact, Aspire, Grin), en version simple et privée.
 
-- Côté créatrice (en anglais) : un lien perso, l'offre à accepter en un clic, le brief, le dépôt du brouillon (fichier ou lien), le lien du post une fois publié, le compteur d'inscrits venus par son lien, ce que ça vaut, sa facture, ses coordonnées de virement, un fil de messages avec Max.
+- Côté créatrice (en anglais, mise en page du portail partenaire Impact : menu à gauche Dashboard, Campaigns, Content, Tracking, Payments, Profile) : un lien perso, l'offre à accepter en un clic, le brief, le dépôt du brouillon (fichier ou lien), le lien du post une fois publié, le compteur d'inscrits venus par son lien, ce que ça vaut, sa facture, ses coordonnées de virement. Les échanges avec Max restent par mail.
 - Côté &Swapp (`/admin`, en français) : la file des mails à envoyer, ce qui attend un geste, les collabs par statut, les créatrices, les totaux (à payer, payé, inscrits, coût par inscrit), et par collab : relire le brouillon, valider ou demander une retouche, mettre à jour les compteurs, préparer le relevé, marquer payée.
 
 Le statut d'une collab avance dans un seul sens : `offered` → `accepted` → `draft_submitted` → (`changes_requested` →) `approved` → `published` → `invoiced` → `paid`. `declined` à part.

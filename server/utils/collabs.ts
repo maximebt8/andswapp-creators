@@ -5,17 +5,10 @@ export type CollabRow = {
   deliverables: string | null; brief: string | null; deadline: string | null; offered_at: string; accepted_at: string | null; draft_key: string | null; draft_url: string | null; draft_note: string | null; draft_at: string | null
   feedback: string | null; approved_at: string | null; published_url: string | null; published_at: string | null; signups: number; waitlist: number; invoice_key: string | null; invoice_at: string | null; paid_at: string | null; paid_amount: number | null; created_at: string
 }
-export type MessageRow = { id: number; collab_id: number; author: string; body: string; ts: string }
 
 export async function collabsOf(db: D1Database, creatorId: number) {
   const { results } = await db.prepare('SELECT * FROM collabs WHERE creator_id = ?1 ORDER BY id DESC').bind(creatorId).all<CollabRow>()
   return (results ?? []).map((row) => ({ ...row, money: payout(row) }))
-}
-
-export async function messagesOf(db: D1Database, collabIds: number[]) {
-  if (!collabIds.length) return [] as MessageRow[]
-  const { results } = await db.prepare(`SELECT * FROM messages WHERE collab_id IN (${collabIds.map(() => '?').join(',')}) ORDER BY id ASC`).bind(...collabIds).all<MessageRow>()
-  return results ?? []
 }
 
 // Une collab qui appartient bien à cette créatrice, sinon 404.

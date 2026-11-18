@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS collabs (
 );
 CREATE INDEX IF NOT EXISTS collabs_creator ON collabs (creator_id);
 
--- Le fil de messages d'une collab (créatrice <> &Swapp), lu des deux côtés.
+-- (messages : table créée le 18/11 puis abandonnée le jour même, max garde les échanges par mail ; elle reste, vide.)
 CREATE TABLE IF NOT EXISTS messages (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   collab_id INTEGER NOT NULL REFERENCES collabs (id),

@@ -18,7 +18,6 @@ export default defineEventHandler(async (event) => {
     const feedback = text(body.feedback, 4000)
     if (!feedback) throw createError({ statusCode: 400, statusMessage: 'say what to change' })
     await env.DB.prepare("UPDATE collabs SET status = 'changes_requested', feedback = ?2 WHERE id = ?1").bind(collab.id, feedback).run()
-    await env.DB.prepare('INSERT INTO messages (collab_id, author, body, ts) VALUES (?1, ?2, ?3, ?4)').bind(collab.id, 'andswapp', feedback, now()).run()
     await hold(env.DB, { to: creator.email, subject: `One tweak on your draft: ${collab.title}`, body: `Hi ${first},\n\nThanks for the draft, I love it. One small thing:\n\n${feedback}\n\nDrop the new version in your space when ready:\n${link}\n\nMax`, kind: 'feedback', ...ids })
     await logEvent(env.DB, 'changes_requested', ids)
     return { ok: true, status: 'changes_requested' }
@@ -27,7 +26,6 @@ export default defineEventHandler(async (event) => {
   if (action === 'approve') {
     const note = text(body.note, 2000)
     await env.DB.prepare("UPDATE collabs SET status = 'approved', approved_at = ?2, feedback = NULL WHERE id = ?1").bind(collab.id, now()).run()
-    if (note) await env.DB.prepare('INSERT INTO messages (collab_id, author, body, ts) VALUES (?1, ?2, ?3, ?4)').bind(collab.id, 'andswapp', note, now()).run()
     await hold(env.DB, { to: creator.email, subject: `Approved, you can post: ${collab.title}`, body: `Hi ${first},\n\nYour draft is approved, go ahead and post it.${note ? `\n\n${note}` : ''}\n\nOnce it is live, paste the link in your space so we can track it:\n${link}\n\nMax`, kind: 'approved', ...ids })
     await logEvent(env.DB, 'approved', ids)
     return { ok: true, status: 'approved' }

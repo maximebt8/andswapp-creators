@@ -1,6 +1,6 @@
 <script setup>
-// Une collab vue par max : le brouillon à relire, les gestes (retouche, valide, compteurs, relevé, payée), le fil,
-// la fiche de la créatrice avec ses coordonnées de virement, les mails liés.
+// Une collab vue par max : le brouillon à relire, les gestes (retouche, valide, compteurs, relevé, payée), la fiche de
+// la créatrice avec ses coordonnées de virement, les mails liés. Les échanges restent par mail (max, 18/11).
 import { money } from '~~/shared/utils/collab'
 
 const route = useRoute()
@@ -26,7 +26,7 @@ const run = async (key, fn) => {
   }
 }
 const act = (action, extra = {}) => run(action, () => $fetch('/api/admin/action', { method: 'POST', body: { id: id.value, action, ...extra } }))
-const f = reactive({ feedback: '', note: '', signups: 0, waitlist: 0, amount: null, message: '', notify: true, edit: false })
+const f = reactive({ feedback: '', note: '', signups: 0, waitlist: 0, amount: null, edit: false })
 watchEffect(() => {
   if (c.value) {
     f.signups = c.value.signups
@@ -41,10 +41,6 @@ const openEdit = () => {
 const saveEdit = () => run('edit', async () => {
   await $fetch('/api/admin/collab', { method: 'POST', body: edit })
   f.edit = false
-})
-const sendMessage = () => run('message', async () => {
-  await $fetch('/api/admin/message', { method: 'POST', body: { id: id.value, body: f.message, notify: f.notify } })
-  f.message = ''
 })
 const sendMail = (m) => run(`send-${m.id}`, () => $fetch('/api/admin/outbox', { method: 'POST', body: { id: m.id, action: 'send' } }))
 const day = (iso) => (iso ? new Date(iso).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '')
@@ -101,7 +97,7 @@ const isVideo = (key) => /\.(mp4|mov|webm|m4v)$/i.test(key ?? '')
           <p v-if="c.draft_url" class="mt-2 text-[14px]">Lien : <a :href="c.draft_url" target="_blank" rel="noopener" class="text-green-dark underline">{{ c.draft_url }}</a></p>
           <p v-if="c.draft_note" class="mt-2 rounded-lg bg-base-200 p-3 text-[14px]">Son mot : {{ c.draft_note }}</p>
           <div v-if="['draft_submitted', 'changes_requested', 'accepted'].includes(c.status)" class="mt-4 space-y-2">
-            <textarea v-model="f.feedback" rows="3" placeholder="Ce qu'il faut retoucher (ira dans le fil et dans un mail à envoyer)" class="input-soft"></textarea>
+            <textarea v-model="f.feedback" rows="3" placeholder="Ce qu'il faut retoucher (ira dans un mail à envoyer, ou à copier dans Outlook)" class="input-soft"></textarea>
             <div class="flex flex-wrap gap-2">
               <button class="btn-swapp px-4 py-2 text-[13px]" :disabled="!!busy" @click="act('approve', { note: f.note })">Valide, elle peut publier</button>
               <button class="btn-swapp-white px-4 py-2 text-[13px]" :disabled="!!busy || !f.feedback" @click="act('changes', { feedback: f.feedback })">Demande une retouche</button>
@@ -134,22 +130,6 @@ const isVideo = (key) => /\.(mp4|mov|webm|m4v)$/i.test(key ?? '')
           </div>
         </section>
 
-        <!-- Le fil -->
-        <section class="card-soft">
-          <p class="label-soft">Fil avec {{ k?.name?.split(' ')[0] }}</p>
-          <div class="mt-2 space-y-2">
-            <div v-for="m in data.messages" :key="m.id" class="rounded-xl px-3 py-2 text-[14px]" :class="m.author === 'andswapp' ? 'ml-8 bg-green-light/30' : 'mr-8 bg-base-200'">
-              <p class="whitespace-pre-wrap">{{ m.body }}</p>
-              <p class="mt-1 text-[11px] text-gray-500">{{ m.author === 'andswapp' ? 'Toi' : k?.name }} · {{ day(m.ts) }}</p>
-            </div>
-            <p v-if="!data.messages?.length" class="text-[13px] text-gray-400">Rien encore.</p>
-          </div>
-          <textarea v-model="f.message" rows="2" placeholder="Écris-lui" class="input-soft mt-2"></textarea>
-          <div class="mt-2 flex flex-wrap items-center gap-3">
-            <button class="btn-swapp px-4 py-2 text-[13px]" :disabled="!!busy || !f.message" @click="sendMessage">Poste dans le fil</button>
-            <label class="flex items-center gap-1 text-[13px] text-gray-600"><input v-model="f.notify" type="checkbox" class="checkbox checkbox-xs" /> et prépare un mail</label>
-          </div>
-        </section>
       </div>
 
       <aside class="space-y-6">
