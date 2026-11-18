@@ -1,0 +1,122 @@
+@layer components {
+
+  /* Titre de section — taille et graisse standard */
+  /* Utilisé dans : index.vue, comment-ca-marche.vue, conseils-echange.vue, guide-locataire.vue, a-propos.vue (32x) */
+  /* Usage : <h2 class="heading-section text-gray-900 mb-4"> — garder la couleur séparée */
+  .heading-section {
+    @apply text-3xl md:text-4xl font-bold;
+  }
+
+  .title {
+    @apply text-[18px] font-extrabold text-gray-900;
+  }
+
+  .title-lg {
+    @apply text-[25px] font-extrabold tracking-tight leading-[1.15] text-gray-900;
+  }
+
+  /* Sous-titre de section (drawer, encarts de formulaire) */
+  .heading-sub {
+    @apply text-base font-bold;
+  }
+
+  /* Titre d'un groupe d'options (panneaux de recherche, listes de suggestions) */
+  /* Utilisé dans : search/index.vue, search/datePanel.vue, search/destinationPanel.vue (10x) */
+  .heading-group {
+    @apply text-xs font-semibold text-base-content/60;
+  }
+
+  /* Ligne d'explication en tête d'un panneau (ex. « Indique la ville où tu habites. ») */
+  /* Utilisé dans : search/datePanel.vue, search/destinationPanel.vue (3x) */
+  .text-hint {
+    @apply text-sm text-base-content/60;
+  }
+
+
+  /* Sous-titre sous un titre (14px, gris, interligne confortable) */
+  /* Utilisé dans : Dashboard/Profile.vue */
+  .subtitle {
+    @apply text-[14px] text-gray-500 font-medium leading-[1.5];
+  }
+
+  /* Texte descriptif/sous-titre — gris standard */
+  /* Utilisé dans : index.vue, comment-ca-marche.vue, conseils-echange.vue (11x) */
+  .text-lead {
+    @apply text-lg text-gray-600;
+  }
+
+  /* Texte atténué (DaisyUI muted) */
+  /* Utilisé dans : experiences/[id].vue, search/map.vue, admin pages (35x) */
+  .text-muted {
+    @apply text-gray-400;
+  }
+
+  .text-accent-muted {
+    @apply text-accent/45;
+  }
+
+  /* Texte très atténué (placeholder, métadonnées) */
+  /* Utilisé dans : search/index.vue (12x), UserSelect.vue (2x) */
+  .text-muted-soft {
+    @apply text-base-content/60;
+  }
+
+  /* Titre d'une carte de contenu (Le projet de X, Ce que X propose, À propos…) */
+  .swapp-card-title {
+    @apply text-xl font-bold;
+  }
+
+  /* Titre d'une section à l'intérieur d'une carte */
+  .swapp-section-title {
+    @apply text-lg font-bold;
+  }
+
+  /* Eyebrow text — label texte nu au-dessus des titres de section */
+  /* Utilisé dans : index.vue (6x) */
+  .title-overline {
+    @apply text-sm font-bold uppercase tracking-[0.2em] mb-4;
+  }
+
+  .text-overline {
+     @apply text-xs font-[700] uppercase tracking-[0.08em];
+  }
+
+  .text-overline.light {
+    @apply text-gray-400 font-medium;
+  }
+
+  .caption {
+    @apply block text-xs font-normal text-gray-400 mt-1;
+  }
+
+  /* Texte d'aide sous un contrôle (ex. « Sélectionnez une période… ») */
+  .swapp-hint {
+    @apply text-xs text-gray-500 italic text-center;
+  }
+
+  /* Lien texte primaire souligné (ex. « Modifier mes dates », « Modifier ») */
+  .swapp-link {
+    @apply text-sm font-semibold text-primary underline cursor-pointer;
+  }
+
+  /*
+  Classes principalement dédiées à la gestion du style dans les textes à traduire (div parent + span interne)
+  */
+  .title-span-gradient > span {
+    background: linear-gradient(135deg, #2e5941 0%, #4a8a5e 50%, #2e5941 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientShift 4s ease infinite;
+  }
+
+  .accent-span-yellow > span {
+    @apply text-yellow font-bold;
+  }
+
+  .accent-span-green > span {
+    @apply text-green-dark font-semibold;
+  }
+
+}

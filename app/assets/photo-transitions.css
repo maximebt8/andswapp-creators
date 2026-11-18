@@ -1,0 +1,48 @@
+/* Smooth carousel transitions - no white background visible */
+.slide-next-enter-active,
+.slide-next-leave-active {
+  transition: transform 0.2s ease-in-out;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.slide-next-enter-active { pointer-events: auto; }
+.slide-next-leave-active { pointer-events: none; }
+
+.slide-next-enter-from {
+  transform: translateX(100%);
+  z-index: 2;
+  pointer-events: auto;
+}
+
+.slide-next-leave-to {
+  transform: translateX(-100%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.slide-prev-enter-active,
+.slide-prev-leave-active {
+  transition: transform 0.2s ease-in-out;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.slide-prev-enter-active { pointer-events: auto; }
+.slide-prev-leave-active { pointer-events: none; }
+
+.slide-prev-enter-from {
+  transform: translateX(-100%);
+  z-index: 2;
+  pointer-events: auto;
+}
+
+.slide-prev-leave-to {
+  transform: translateX(100%);
+  z-index: 1;
+  pointer-events: none;
+}

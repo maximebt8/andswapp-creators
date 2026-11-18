@@ -1,0 +1,173 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+@import "./photo-transitions.css";
+@import "tailwindcss";
+@plugin "daisyui";
+
+/* Composants custom */
+@import "./components/_buttons.css";
+@import "./components/_cards.css";
+@import "./components/_drawers.css";
+@import "./components/_sections.css";
+@import "./components/_badges.css";
+@import "./components/_icons.css";
+@import "./components/_forms.css";
+@import "./components/_typography.css";
+@import "./components/_navigation.css";
+@import "./components/_utilities.css";
+
+/* AndSwapp theme: custom colors as Tailwind utilities (Tailwind v4 @theme) */
+@theme {
+  --text-base: 15px;
+
+  --color-primary: #2E5941;        /* était #285943, hex exact brandbook */
+  --color-primary-dark: #1B3A2B;
+  --color-primary-light: #4F8A6F;
+
+  --color-secondary: #6B7280;
+  --color-secondary-light: #E5E7EB;
+  --color-secondary-dark: #374151;
+  --color-mustard: #d2a106;
+
+  --color-green: #A5C1AA;          /* harmoniser green et green-light */
+  --color-green-bright: #bbf7d0;
+  --color-green-light: #A5C1AA;
+  --color-green-dark: #2E5941;
+
+
+  --color-yellow: #FFCC00;         /* hex exact brandbook */
+  --color-yellow-bright: #fef08a;
+  --color-accent: #FFCC00;         /* était #FFD600, à unifier */
+  --color-warning: #FFCC00;
+
+  --color-accent-light: #fffaeb;
+  --color-background: #F8FAF9;
+  --color-surface: #FFFFFF;
+  --color-success: #15803D;
+  --color-error: #b91c1c;
+
+  /* Info — remplacer le vert pomme hors palette */
+  --color-info: #A5C1AA;
+
+  --color-text-primary: #111827;   /* Gris foncé = texte principal */
+  --color-text-secondary: #6B7280; /* Gris moyen = texte secondaire */
+
+  --color-text-muted: #6B7280;
+  --color-border: #E5E7EB;
+  --color-border-active: #285943;
+  --color-swapp-dark: #1B3A2B;
+  --color-swapp: #285943;
+  --color-swapp-light: #4F8A6F;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+/* Override DaisyUI theme to use AndSwapp primary (#285943).
+   Must target :root and [data-theme=light] so tooltip-primary and all
+   primary variants use var(--color-primary). */
+:root,
+[data-theme="light"] {
+  /* PRIMARY → Vert forêt (boutons CTA, headers) */
+  --color-primary: #2E5941;
+  --color-primary-content: #ffffff;
+
+  /* SECONDARY → Sauge (fonds secondaires, badges) */
+  --color-secondary: #A5C1AA;
+  --color-secondary-content: #111827;   /* texte gris foncé car fond clair */
+
+  /* ACCENT → Jaune (ponctuel uniquement) */
+  --color-accent: #FFCC00;
+  --color-accent-content: #2E5941;      /* texte foncé sur jaune */
+
+  /* NEUTRAL → Gris moyen */
+  --color-neutral: #6B7280;
+  --color-neutral-content: #ffffff;
+
+  /* BASE → Blanc + Gris clair + Gris foncé */
+  --color-base-100: #ffffff;
+  --color-base-200: #F9FAFB;
+  --color-base-300: #6B7280;
+  --color-base-400: #9CA3AF;
+  --color-base-content: #111827;        /* Gris foncé = texte principal */
+
+  /* SÉMANTIQUES — à faire correspondre au brandbook */
+  --color-info: #A5C1AA;                /* Sauge, tons informatifs doux */
+  --color-info-content: #111827;
+
+  --color-success: #15803D;             /* Vert forêt = succès naturel */
+  --color-success-content: #ffffff;
+
+  --color-warning: #FFCC00;             /* Jaune = avertissement */
+  --color-warning-content: #111827;
+
+  --color-error: #b91c1c;
+  --color-error-content: #ffffff;
+}
+/*
+:root,
+[data-theme="light"] {
+  --color-primary: #285943;
+  --color-primary-content: #ffffff;
+  --color-secondary: #6B7280;
+  --color-secondary-content: #ffffff;
+  --color-accent: #FFD600;
+  --color-accent-content: #1B3A2B;
+  --color-neutral: #374151;
+  --color-neutral-content: #ffffff;
+  --color-base-100: #ffffff;
+  --color-base-200: #F8FAF9;
+  --color-base-300: #E5E7EB;
+  --color-base-content: #1B3A2B;
+  --color-info: #A8E063;
+  --color-success: #4F8A6F;
+  --color-warning: #FFD600;
+  --color-error: #EF4444;
+}
+*/
+
+:root {
+  --text-base: 15px;
+}
+
+body {
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  background-color: #F8FAF9;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+/* Espace créateurs : la police des notes, quelques blocs communs, une animation. */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&display=swap");
+
+@layer components {
+  .font-note {
+    font-family: "Montserrat", system-ui, sans-serif;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .card-soft {
+    @apply rounded-2xl border border-gray-200 bg-white p-5 shadow-sm;
+  }
+  .label-soft {
+    @apply text-[11px] font-semibold uppercase tracking-wide text-gray-500;
+  }
+  .pill {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-[12px] font-semibold;
+  }
+  .input-soft {
+    @apply w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-[15px] outline-none focus:border-green-dark;
+  }
+}
+
+@keyframes swBob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+.key-breathe {
+  animation: swBob 2.8s ease-in-out infinite;
+}

@@ -1,0 +1,66 @@
+@layer components {
+
+  /* Cercle icône — base + variantes colorées partagent le même socle */
+  .icon-circle,
+  .icon-circle-light,
+  .icon-circle-primary,
+  .icon-circle-accent,
+  .icon-circle-muted-sm {
+    @apply flex-shrink-0 rounded-full flex items-center justify-center;
+  }
+
+  /* Cercle icône vert clair (décoratif) */
+  /* Utilisé dans : index.vue trust cards, faq.vue */
+  .icon-circle-light {
+    @apply w-12 h-12 bg-green-light/20;
+  }
+
+  /* Cercle icône vert foncé (numéroté, step) */
+  /* Utilisé dans : contact.vue, comment-ca-marche.vue steps */
+  .icon-circle-primary {
+    @apply w-10 h-10 bg-green-dark text-white font-bold;
+  }
+
+  /* Cercle icône jaune */
+  /* Utilisé dans : contact.vue, faq.vue */
+  .icon-circle-accent {
+    @apply w-10 h-10 bg-yellow text-green-dark font-bold;
+  }
+
+  /* Cercle icône gris clair (petit, décoratif) */
+  /* Utilisé dans : Dashboard/HelpTooltip.vue (variant circle) */
+  .icon-circle-muted-sm {
+    @apply w-4 h-4 bg-secondary-light text-text-muted
+           transition-[filter] hover:brightness-95;
+  }
+
+  /* Cercle icône gradient vert (grand, décoratif) */
+  /* Utilisé dans : temoignages.vue avatars (2x) */
+  .icon-circle-gradient-lg {
+    @apply w-16 h-16 bg-gradient-to-br from-green-dark to-green-light
+           rounded-full flex items-center justify-center text-3xl;
+  }
+
+  /* Badge icône jaune numéroté (grand) */
+  /* Utilisé dans : guide-locataire.vue steps (4x) */
+  .icon-badge-yellow-lg {
+    @apply w-12 h-12 bg-yellow text-green-dark rounded-full
+           flex items-center justify-center text-xl font-bold mb-4;
+  }
+
+  /* Cercle icône rouge (état d'erreur, problème) */
+  /* Utilisé dans : a-propos.vue problèmes (4x) */
+  .icon-circle-error {
+    @apply flex-shrink-0 w-8 h-8 bg-red-100 rounded-full
+           flex items-center justify-center text-red-600 font-bold;
+  }
+
+  /* Bouton icône réseaux sociaux (footer) */
+  /* Utilisé dans : app.vue footer (3x) */
+  .icon-social-button {
+    @apply w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm
+           border border-white/20 flex items-center justify-center
+           hover:bg-yellow hover:border-yellow transition-all;
+  }
+
+}

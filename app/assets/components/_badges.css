@@ -1,0 +1,199 @@
+@layer components {
+
+  /* Styles communs aux labels de section */
+  .section-label,
+  .section-label-green,
+  .section-label-dark {
+    @apply inline-block px-4 py-2 rounded-full text-sm font-semibold mb-4;
+  }
+
+  /* Label de section (fond jaune) */
+  /* Utilisé dans : index.vue (×4), conseils-echange.vue */
+  .section-label {
+    @apply bg-yellow/20 text-green-dark;
+  }
+
+  /* Label de section (fond vert clair) */
+  /* Utilisé dans : index.vue, a-propos.vue */
+  .section-label-green {
+    @apply bg-green-light/20 text-green-dark;
+  }
+
+  /* Label de section sur fond sombre (fond vert foncé) */
+  /* Utilisé dans : a-propos.vue */
+  .section-label-dark {
+    @apply bg-green-dark text-white;
+  }
+
+  /* Pill du hero (avec backdrop-blur) */
+  /* Utilisé dans : toutes les sections hero */
+  .hero-pill {
+    @apply inline-block bg-yellow/20 backdrop-blur-sm
+           px-4 py-2 rounded-full mb-6
+           border border-yellow/30;
+  }
+
+  /* Badge superposé sur image */
+  /* Utilisé dans : index.vue cards, conseils-echange.vue */
+  .badge-overlay {
+    @apply bg-green-dark/90 backdrop-blur-sm text-white
+           text-xs font-semibold px-3 py-1 rounded-full;
+  }
+
+  /* Badge identité vérifiée — fond vert foncé */
+  /* Utilisé dans : Dashboard/Profile.vue */
+  .badge-verified {
+    @apply inline-flex items-center px-3 py-1 rounded-full
+           text-xs font-semibold
+           bg-green-dark text-white;
+  }
+
+  /* Badge en attente de vérification — fond jaune */
+  /* Utilisé dans : Dashboard/Profile.vue */
+  .badge-pending {
+    @apply inline-flex items-center px-3 py-1 rounded-full
+           text-xs font-semibold
+           bg-yellow text-green-dark;
+  }
+
+  .badge-strong {
+    @apply badge badge-ghost text-xs font-semibold text-gray-700;
+  }
+
+  /* Pastille cliquable — sélection formulaire, filtres (base alignée badge-verified) */
+  /* Utilisé dans : Profile, Accommodation, ExperienceFormModal, Swapps */
+  .swapp-badge {
+    @apply badge bg-gray-50 rounded-full p-4 border-[1.5px] border-gray-200 cursor-pointer transition-[colors,transform] duration-150 ease-out;
+  }
+
+  .swapp-badge:hover {
+    @apply border-[1.5px] border-green bg-green-light/40 -translate-y-px;
+  }
+
+  .swapp-badge.active {
+    @apply border-[1.5px] border-green text-green-dark bg-green-light/40 font-bold;
+  }
+
+  /* Variante filtre liste — fond blanc sur carte dashboard */
+  .swapp-badge--filter {
+    @apply bg-white text-gray-500 px-3 py-1.5 text-xs font-semibold;
+  }
+
+  .swapp-badge--filter:hover {
+    @apply bg-green-light/20 text-gray-700;
+  }
+
+  .swapp-badge--filter.active {
+    @apply bg-green-dark text-white border-green-dark;
+  }
+
+  /* Variante carrée — tuile mois avec texte centré sur 2 lignes (recherche) */
+  .swapp-badge--tile {
+    @apply h-16 w-16 shrink-0 flex-col gap-0.5 rounded-2xl p-0;
+  }
+
+  /* Pill de filtre rapide — barre de résultats recherche (desktop) */
+  /* Utilisé dans : search/index.vue (4x) */
+  .swapp-filter-pill {
+    @apply flex items-center gap-2 rounded-full border-2 border-base-300 px-4 py-2
+           text-sm font-medium cursor-pointer transition-colors
+           hover:border-base-content/40;
+  }
+
+  .swapp-filter-pill.active {
+    @apply border-primary text-primary hover:border-primary;
+  }
+
+  /* Option sélectionnable pleine largeur — sélection de période (AvailabilityCalendar) */
+  .swapp-option {
+    @apply w-full text-left border border-base-300 rounded-lg p-3
+           cursor-pointer transition-all hover:shadow-md hover:border-primary;
+  }
+
+  .swapp-option.active {
+    @apply border-primary bg-primary/5;
+  }
+
+  /* Variante pleine — option sélectionnée en couleur primaire (ex. toggle onboarding) */
+  .swapp-option--solid.active {
+    @apply bg-primary text-white border-primary;
+  }
+
+  /* Verified badge — bordered green pill with checkmark (dv3-verified-badge) */
+  /* Utilisé dans : Dashboard/Profile.vue card 1 */
+  .verified-badge {
+    @apply inline-flex items-center gap-1
+           text-[10px] font-bold tracking-[0.025em] text-green-dark/90
+           bg-white border border-green-dark/30 rounded-full
+           px-2 py-[2px] whitespace-nowrap;
+    box-shadow: 0 1px 3px rgba(46,89,65,0.08);
+  }
+
+  /* Avatar rond plein à initiales — récap d'échange, paiement */
+  .swapp-avatar-initials {
+    @apply flex h-11 w-11 shrink-0 items-center justify-center
+           rounded-full bg-green-dark text-sm font-bold text-white;
+  }
+
+  .badge-early-user {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #0c1f14 0%, #183327 50%, #0c1f14 100%);
+    border: 1px solid rgba(255, 204, 0, 0.25);
+    border-radius: 12px;
+    padding: 10px 14px 10px 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 204, 0, 0.08);
+  }
+
+  .badge-shimmer-accent {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 35%;
+      height: 100%;
+      background: linear-gradient(105deg, transparent 30%, rgba(255, 220, 50, 0.12) 50%, transparent 70%);
+      animation: premier-badge-shimmer 4s ease-in-out infinite;
+      pointer-events: none;
+  }
+
+   /* Profile avatar large — 80px circle container (dv3-profile-avatar-lg) */
+  /* Utilisé dans : Dashboard/Profile.vue card 1 */
+  .profile-avatar-lg {
+    @apply relative w-20 h-20 shrink-0 cursor-pointer;
+  }
+
+  /* Avatar placeholder large — initials circle (dv3-avatar-placeholder-lg) */
+  /* Utilisé dans : Dashboard/Profile.vue card 1 */
+  .profile-avatar-lg-placeholder {
+    @apply w-20 h-20 rounded-full flex items-center justify-center
+           text-[28px] font-black text-green-dark
+           border-[2.5px] border-gray-200 transition-all duration-200
+           hover:border-green-light hover:scale-[1.04];
+  }
+
+  /* Avatar image large — (dv3-avatar-img-lg) */
+  /* Utilisé dans : Dashboard/Profile.vue card 1 */
+  .profile-avatar-lg-img {
+    @apply w-20 h-20 rounded-full object-cover
+           border-[2.5px] border-gray-200 transition-colors duration-200
+           hover:border-green-light;
+  }
+
+  /* Avatar badge — camera icon bubble (dv3-avatar-badge) */
+  /* Utilisé dans : Dashboard/Profile.vue card 1 */
+  .profile-avatar-badge {
+    @apply absolute bottom-0 right-0
+           w-5 h-5 bg-gray-100 rounded-full
+           border-2 border-white
+           flex items-center justify-center text-gray-400;
+  }
+
+  @keyframes premier-badge-shimmer {
+      0% { transform: translateX(-200%); }
+      60%, 100% { transform: translateX(400%); }
+  }
+
+}

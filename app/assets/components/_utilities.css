@@ -1,0 +1,239 @@
+@layer utilities {
+
+  .search-bar-in {
+    max-height: 16rem;
+    opacity: 1;
+    overflow: visible;
+    transition: opacity 200ms ease-out, max-height 0ms;
+  }
+
+  .search-bar-out {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transition: opacity 120ms ease-out, max-height 0ms linear 120ms;
+  }
+
+  @media (max-width: 767px) {
+    .search-bar-out {
+      max-height: none;
+      opacity: 1;
+      overflow: visible;
+      pointer-events: auto;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .search-bar-in,
+    .search-bar-out {
+      transition: none;
+    }
+  }
+  .search-pill-in {
+    animation: search-pill-in 220ms ease-out 200ms both;
+  }
+
+  @keyframes search-pill-in {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .search-pill-in { animation: none; }
+  }
+
+  .mobile-menu-in {
+    animation: mobile-menu-in 200ms ease-out both;
+  }
+
+  @keyframes mobile-menu-in {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-menu-in { animation: none; }
+  }
+
+  /* Flex centré horizontal + vertical */
+  /* Utilisé comme base de nombreux composants (56x combiné avec d'autres classes) */
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+
+  .flex-between {
+    @apply flex items-center justify-between;
+  }
+
+  /* Overlay modal standard */
+  /* Utilisé dans : AppModal.vue, SuccessModal.vue, CookiePreferencesModal.vue, search/map.vue */
+  .modal-overlay {
+    @apply fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-2 py-4 md:px-4 md:py-8;
+  }
+
+  .modal-overlay button.close-modal {
+    @apply absolute top-3 right-3 p-1 rounded-lg cursor-pointer text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors;
+  }
+
+
+  /* Pastille ronde — hérite la couleur du texte parent (bg-current) */
+  .swapp-dot {
+    @apply w-1.5 h-1.5 rounded-full shrink-0 bg-current;
+  }
+
+  .swapp-dot.active {
+    @apply bg-success;
+  }
+
+}
+
+@layer components {
+
+  /* -------------------------------------------------------------------------
+   * Callout — feedback informatif
+   * Compact (dashboard) : .swapp-callout + --success | --warning | --ghost
+   * Encart bordé (pages) : .swapp-callout-info | .swapp-callout-warn
+   * ------------------------------------------------------------------------- */
+
+  .swapp-callout {
+    @apply flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold;
+  }
+
+  .swapp-callout--success {
+    @apply bg-green-light/15 text-green-dark border border-green-dark/20;
+  }
+
+  .swapp-callout--warning {
+    @apply bg-amber-50 text-amber-800 border border-amber-200;
+  }
+
+  .swapp-callout--ghost {
+    @apply bg-gray-100 text-gray-600 border border-gray-200;
+  }
+
+  .swapp-callout--error {
+    @apply bg-red-50 text-red-700 border border-red-200;
+  }
+
+  .swapp-callout-info {
+    @apply bg-blue-50 border border-blue-200 rounded-lg p-4;
+  }
+
+  .swapp-callout-warn {
+    @apply bg-yellow/10 border border-yellow/30 text-gray-700;
+  }
+
+  /* Modales — AppModal (définitions regroupées ici provisoirement) */
+  .modal-panel {
+    @apply relative w-full bg-white border border-gray-200 rounded-2xl overflow-hidden;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.04),
+      0 4px 16px rgba(0, 0, 0, 0.03);
+  }
+
+  .modal-stack {
+    @apply flex max-h-[80vh] flex-col;
+  }
+
+  .modal-plain {
+    @apply max-h-[80vh] overflow-y-auto p-6 pt-12;
+  }
+
+  .modal-header {
+    @apply flex items-start justify-between gap-3 border-b border-gray-100 px-[18px] py-[14px];
+  }
+
+  .modal-body {
+    @apply min-h-0 flex-1 overflow-y-auto p-5;
+  }
+
+  .modal-title {
+    @apply text-lg font-black tracking-tight text-gray-900;
+  }
+
+  .modal-subtitle {
+    @apply mt-2 text-xs text-base-content/70;
+  }
+
+  .modal-footer-actions {
+    @apply shrink-0 px-5 pb-5 pt-1;
+  }
+
+  /* Paires label / valeur dans un <dl> */
+  dl .row {
+    @apply grid grid-cols-[3.25rem_1fr] gap-x-4 items-start;
+  }
+
+  dl .row dt {
+    @apply text-[10px] font-medium tracking-wider uppercase text-gray-400 pt-0.5;
+  }
+
+  dl .row dd {
+    @apply text-gray-900 font-medium leading-snug;
+  }
+
+  /* Help tooltip — Dashboard/HelpTooltip.vue */
+  button.icon-circle-muted-sm,
+  .swapp-help-tooltip-trigger-plain {
+    @apply p-0 border-0 cursor-help select-none
+           focus:outline-none focus-visible:ring-2 focus-visible:ring-green-light focus-visible:ring-offset-2;
+  }
+
+  .swapp-help-tooltip-trigger-plain {
+    @apply inline-flex shrink-0 bg-transparent rounded-full;
+  }
+
+  .swapp-card:has(.swapp-help-tooltip) {
+    overflow: visible;
+  }
+
+  .swapp-card:has(.swapp-help-tooltip:is(:hover, :focus-within)) {
+    @apply relative z-20;
+  }
+
+  .tooltip .swapp-help-tooltip-content {
+    @apply max-w-[220px] rounded-[10px] text-left bg-base-content! text-base-100 font-normal text-xs leading-normal z-50;
+    padding-block: 1.2rem;
+    padding-inline: 1.45rem;
+  }
+
+  .tooltip .swapp-help-tooltip-content p {
+    @apply m-0 font-normal text-xs leading-normal;
+    font-weight: 400;
+  }
+
+  /* -------------------------------------------------------------------------
+   * Calendrier — cellule de jour + états (AvailabilityCalendar)
+   * Base : .swapp-calendar-day ; états : --selected | --available
+   * ------------------------------------------------------------------------- */
+  .swapp-calendar-day {
+    @apply p-2 rounded border-2 border-transparent cursor-pointer
+           transition-colors hover:border-primary;
+  }
+
+  .swapp-calendar-day--selected {
+    @apply bg-primary text-white border-primary;
+  }
+
+  .swapp-calendar-day--available {
+    @apply bg-green-light/30 text-green-dark border-transparent;
+  }
+
+  /* Grille du calendrier (en-têtes de jours + cellules) — AvailabilityCalendar */
+  .swapp-calendar-grid {
+    @apply grid grid-cols-7 gap-1 text-center;
+  }
+
+  .swapp-calendar-weekday {
+    @apply font-semibold;
+  }
+
+  /* Barre d'action fixée en bas d'écran, dégageant l'indicateur home des iPhone */
+  .swapp-action-bar {
+    @apply fixed left-0 right-0 bottom-0 z-40 px-4 pt-3
+           bg-white border-t border-base-300;
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+
+}

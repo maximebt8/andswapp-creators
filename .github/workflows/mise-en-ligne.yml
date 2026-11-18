@@ -1,0 +1,58 @@
+# Mise en ligne de l'espace créateurs (projet Pages « andswapp-creators »), sans Terminal ni clé à coller.
+# Même mécanique que GTM-VIE : construit main tel quel dans une copie propre, puis le publie.
+# À la demande seulement : rien ne part tout seul à la fusion. Pour la lancer : Actions, mise-en-ligne, Run workflow.
+# La clé Cloudflare vit dans les secrets du dépôt (CLOUDFLARE_API_TOKEN), droit Cloudflare Pages, Edit.
+name: mise-en-ligne
+on:
+  workflow_dispatch:
+concurrency:
+  group: mise-en-ligne
+  cancel-in-progress: false
+jobs:
+  publier:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CLOUDFLARE_ACCOUNT_ID: f3708dbde41dd588faa5fe152189612c
+    steps:
+      - name: Depuis main, avec la clé
+        env:
+          T: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          [ "$GITHUB_REF" = refs/heads/main ] || { echo "::error::La mise en ligne part de main, et de main seulement."; exit 1; }
+          [ -n "$T" ] || { echo "::error::Clé manquante : ajouter le secret CLOUDFLARE_API_TOKEN (droit Cloudflare Pages, Edit) dans Settings, Secrets and variables, Actions."; exit 1; }
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Construire
+        run: npx nuxt build
+      - name: Publier
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: npx wrangler pages deploy dist --project-name andswapp-creators --branch main --commit-hash "$GITHUB_SHA" --commit-message "$(git log -1 --format=%s | cut -c1-100)"
+      - name: Poser les secrets du site (une fois, si le dépôt les a)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+        run: |
+          [ -n "$ADMIN_KEY" ] && printf '%s' "$ADMIN_KEY" | npx wrangler pages secret put ADMIN_KEY --project-name andswapp-creators || echo "ADMIN_KEY : pas de secret dans le dépôt, on garde celui du site"
+          [ -n "$BREVO_API_KEY" ] && printf '%s' "$BREVO_API_KEY" | npx wrangler pages secret put BREVO_API_KEY --project-name andswapp-creators || echo "BREVO_API_KEY : pas de secret dans le dépôt, on garde celui du site"
+      - name: Vérifier ce qui est en ligne
+        run: |
+          set -uo pipefail
+          ID=$(jq -r .id dist/_nuxt/builds/latest.json)
+          EN_LIGNE=""
+          for i in $(seq 1 20); do
+            EN_LIGNE=$(curl -fsS "https://andswapp-creators.pages.dev/_nuxt/builds/latest.json?v=$i" | jq -r .id) || EN_LIGNE=""
+            [ "$EN_LIGNE" = "$ID" ] && break
+            sleep 6
+          done
+          [ "$EN_LIGNE" = "$ID" ] || { echo "::error::La version en ligne n'est pas celle qu'on vient de publier."; exit 1; }
+          for u in https://andswapp-creators.pages.dev/ https://creators.andswapp.com/; do
+            echo "$(curl -s -o /dev/null -w '%{http_code}' "$u") $u"
+          done
+          echo "En ligne : main $(git rev-parse --short HEAD), build $ID"
