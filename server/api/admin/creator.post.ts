@@ -18,16 +18,18 @@ export default defineEventHandler(async (event) => {
     await env.DB.prepare('UPDATE creators SET name = ?2, handle = ?3, email = ?4, city = ?5, lang = ?6, code = ?7, notes = ?8, status = COALESCE(?9, status) WHERE id = ?1')
       .bind(id, fields.name, fields.handle, fields.email, fields.city, fields.lang, fields.code, fields.notes, ['invited', 'active', 'paused'].includes(body.status) ? body.status : null)
       .run()
-    return { id, link: await creatorLink(env, id) }
+    const row = await env.DB.prepare('SELECT id, link_token FROM creators WHERE id = ?1').bind(id).first<{ id: number; link_token: string | null }>()
+    return { id, link: await creatorLink(env, row ?? { id }) }
   }
 
   const exists = await env.DB.prepare('SELECT id FROM creators WHERE lower(email) = ?1').bind(fields.email).first<{ id: number }>()
   if (exists) throw createError({ statusCode: 409, statusMessage: 'already there' })
-  const result = await env.DB.prepare('INSERT INTO creators (name, handle, email, city, lang, code, notes, status, created_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)')
-    .bind(fields.name, fields.handle, fields.email, fields.city, fields.lang, fields.code, fields.notes, 'invited', now())
+  const link_token = newLinkToken()
+  const result = await env.DB.prepare('INSERT INTO creators (name, handle, email, city, lang, code, notes, status, created_at, link_token) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)')
+    .bind(fields.name, fields.handle, fields.email, fields.city, fields.lang, fields.code, fields.notes, 'invited', now(), link_token)
     .run()
   const newId = Number(result.meta.last_row_id)
-  const link = await creatorLink(env, newId)
+  const link = await creatorLink(env, { id: newId, link_token })
   const first = fields.name.split(' ')[0]
   await hold(env.DB, {
     to: fields.email,

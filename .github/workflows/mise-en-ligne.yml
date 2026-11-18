@@ -33,11 +33,7 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: npx wrangler pages project list 2>/dev/null | grep -q andswapp-creators || npx wrangler pages project create andswapp-creators --production-branch main
-      - name: Publier
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        run: npx wrangler pages deploy dist --project-name andswapp-creators --branch main --commit-hash "$GITHUB_SHA" --commit-message "$(git log -1 --format=%s | cut -c1-100)"
-      - name: Poser les secrets du site (une fois, si le dépôt les a)
+      - name: Poser les secrets du site avant de publier (un secret posé après ne vaut que pour la publication suivante)
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
@@ -45,6 +41,10 @@ jobs:
         run: |
           [ -n "$ADMIN_KEY" ] && printf '%s' "$ADMIN_KEY" | npx wrangler pages secret put ADMIN_KEY --project-name andswapp-creators || echo "ADMIN_KEY : pas de secret dans le dépôt, on garde celui du site"
           [ -n "$BREVO_API_KEY" ] && printf '%s' "$BREVO_API_KEY" | npx wrangler pages secret put BREVO_API_KEY --project-name andswapp-creators || echo "BREVO_API_KEY : pas de secret dans le dépôt, on garde celui du site"
+      - name: Publier
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: npx wrangler pages deploy dist --project-name andswapp-creators --branch main --commit-hash "$GITHUB_SHA" --commit-message "$(git log -1 --format=%s | cut -c1-100)"
       - name: Déclarer creators.andswapp.com sur le projet Pages (le CNAME vit chez GoDaddy, comme alumni)
         continue-on-error: true
         env:

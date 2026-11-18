@@ -22,11 +22,13 @@ const html = (body: string) =>
     .join('')}<p style="margin:18px 0 0;color:#6B7280;font-size:13px">&amp;Swapp · andswapp.com</p></div>`
 
 // Un mail retenu part, une fois. En local sans clé Brevo, il s'écrit dans la console et passe en « sent » quand même.
+// En ligne sans clé Brevo, on refuse : un mail marqué envoyé qui n'est jamais parti serait pire que tout.
 export async function sendHeld(env: MailEnv, id: number) {
   const mail = await env.DB.prepare('SELECT * FROM outbox WHERE id = ?1').bind(id).first<{ id: number; to_email: string; subject: string; body: string; status: string }>()
   if (!mail) throw createError({ statusCode: 404, statusMessage: 'no such mail' })
   if (mail.status === 'sent') return mail
   if (!env.BREVO_API_KEY) {
+    if (!import.meta.dev) throw createError({ statusCode: 503, statusMessage: 'no brevo key: copy the text and send it from Outlook' })
     console.log(`[mail non envoyé, pas de clé Brevo] à ${mail.to_email} : ${mail.subject}\n${mail.body}`)
     await env.DB.prepare("UPDATE outbox SET status = 'sent', sent_at = ?2, error = 'local' WHERE id = ?1").bind(id, now()).run()
     return { ...mail, status: 'sent' }

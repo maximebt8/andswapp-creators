@@ -16,9 +16,13 @@ CREATE TABLE IF NOT EXISTS creators (
   invoice_mode TEXT NOT NULL DEFAULT 'self', -- self : elle envoie sa facture ; statement : relevé &Swapp accepté
   notes TEXT,
   created_at TEXT NOT NULL,
-  last_seen TEXT
+  last_seen TEXT,
+  link_token TEXT              -- jeton du lien perso (32 car.), tiré au sort à la création
 );
 CREATE UNIQUE INDEX IF NOT EXISTS creators_email ON creators (email);
+-- 18/11/2026 : le lien perso est un jeton tiré au sort et stocké (comme Impact), plus simple que la signature par clé.
+-- Les anciennes fiches sans jeton gardent le lien signé. Ajout en prod : ALTER TABLE creators ADD COLUMN link_token TEXT;
+-- (sur une base neuve, la colonne est déjà dans le CREATE ci-dessus via l'ALTER conditionnel du README)
 
 -- Une collab = une offre, un brief, un contenu, un paiement. Le statut avance dans un seul sens.
 -- offered > accepted > draft_submitted > changes_requested > approved > published > invoiced > paid (declined à part)
