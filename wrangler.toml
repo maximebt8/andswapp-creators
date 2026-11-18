@@ -15,5 +15,5 @@ binding = "MEDIA"
 bucket_name = "andswapp-creators-media"
 
 [vars]
-MAX_EMAIL = "maxoubarret@gmail.com"
+MAX_EMAIL = "maxime.barret@andswapp.com"
 SITE_URL = "https://creators.andswapp.com"

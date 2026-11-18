@@ -160,10 +160,11 @@ const title = computed(() => (detail.value ? detail.value.title : TITLES[section
     <p class="mt-2 max-w-sm text-[15px] text-gray-600">Open the link from the email Max sent you, or <NuxtLink to="/" class="underline">ask for it again</NuxtLink>.</p>
   </div>
 
-  <CreatorShell v-else :nav="nav" :current="section" :title="title" :name="me.name" :base="base">
+  <CreatorShell v-else :nav="nav" :current="section" :title="title" :name="me.name" :handle="me.handle || ''" :base="base">
     <!-- ===== Dashboard ===== -->
     <template v-if="section === 'home'">
-      <p class="text-[15px] text-gray-600">Welcome back, {{ first }}. Here is where your &Swapp partnership stands.</p>
+      <h2 class="text-xl font-extrabold text-gray-900">Welcome back, {{ me.name }}</h2>
+      <p class="mt-0.5 text-[15px] text-gray-600">Here is where your &Swapp partnership stands.</p>
 
       <div class="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
         <div class="swapp-card p-4"><p class="label-soft">Active campaigns</p><p class="mt-1 text-2xl font-extrabold text-gray-900">{{ active.length }}</p></div>

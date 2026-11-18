@@ -29,6 +29,10 @@ jobs:
       - run: npm ci
       - name: Construire
         run: npx nuxt build
+      - name: Le projet Pages existe (créé au premier passage)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: npx wrangler pages project list 2>/dev/null | grep -q andswapp-creators || npx wrangler pages project create andswapp-creators --production-branch main
       - name: Publier
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -41,6 +45,21 @@ jobs:
         run: |
           [ -n "$ADMIN_KEY" ] && printf '%s' "$ADMIN_KEY" | npx wrangler pages secret put ADMIN_KEY --project-name andswapp-creators || echo "ADMIN_KEY : pas de secret dans le dépôt, on garde celui du site"
           [ -n "$BREVO_API_KEY" ] && printf '%s' "$BREVO_API_KEY" | npx wrangler pages secret put BREVO_API_KEY --project-name andswapp-creators || echo "BREVO_API_KEY : pas de secret dans le dépôt, on garde celui du site"
+      - name: Brancher creators.andswapp.com (si la clé le permet)
+        continue-on-error: true
+        env:
+          T: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          API=https://api.cloudflare.com/client/v4
+          H="Authorization: Bearer $T"
+          # 1. le domaine sur le projet Pages
+          curl -fsS -X POST "$API/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/andswapp-creators/domains" -H "$H" -H 'content-type: application/json' --data '{"name":"creators.andswapp.com"}' | jq -r '.success, (.errors[]?.message // empty)'
+          # 2. l'enregistrement DNS creators -> andswapp-creators.pages.dev, si la clé voit la zone
+          ZONE=$(curl -fsS "$API/zones?name=andswapp.com" -H "$H" | jq -r '.result[0].id // empty')
+          [ -n "$ZONE" ] || { echo "La clé ne voit pas la zone andswapp.com : ajouter à la main le CNAME creators -> andswapp-creators.pages.dev (proxied)."; exit 0; }
+          EXISTE=$(curl -fsS "$API/zones/$ZONE/dns_records?name=creators.andswapp.com" -H "$H" | jq -r '.result[0].id // empty')
+          [ -n "$EXISTE" ] && { echo "DNS déjà là."; exit 0; }
+          curl -fsS -X POST "$API/zones/$ZONE/dns_records" -H "$H" -H 'content-type: application/json' --data '{"type":"CNAME","name":"creators","content":"andswapp-creators.pages.dev","proxied":true}' | jq -r '.success, (.errors[]?.message // empty)'
       - name: Vérifier ce qui est en ligne
         run: |
           set -uo pipefail
