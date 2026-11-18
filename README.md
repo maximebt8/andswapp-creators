@@ -42,7 +42,7 @@ Le workflow `mise-en-ligne` (onglet Actions, à la demande) construit `main` dan
 
 À la main : `npm run deploy`.
 
-Première mise en ligne : créer le projet Pages `andswapp-creators` (le premier `wrangler pages deploy` le crée), poser les secrets dans Cloudflare, exécuter `schema.sql` sur la base de prod (`npx wrangler d1 execute andswapp-creators --remote --file schema.sql`), puis brancher le domaine `creators.andswapp.com` sur le projet Pages.
+Première mise en ligne : créer le projet Pages `andswapp-creators` (le premier `wrangler pages deploy` le crée), poser les secrets dans Cloudflare, exécuter `schema.sql` sur la base de prod (`npx wrangler d1 execute andswapp-creators --remote --file schema.sql`), puis déclarer le domaine `creators.andswapp.com` sur le projet Pages (le workflow le fait) ; le DNS d'andswapp.com est chez GoDaddy : CNAME `creators` vers `andswapp-creators.pages.dev`, comme `alumni`.
 
 ## Pièges connus
 
