@@ -95,3 +95,31 @@ CREATE TABLE IF NOT EXISTS events (
   props TEXT
 );
 CREATE INDEX IF NOT EXISTS events_ts ON events (ts);
+
+-- 20/11/2026, lot 1 de la V2 : dates en clair, kit, légende modèle, captures de stats, rappels. Ajouts en prod :
+--   ALTER TABLE collabs ADD COLUMN draft_due TEXT;      -- AAAA-MM-JJ : le brouillon pour le
+--   ALTER TABLE collabs ADD COLUMN post_from TEXT;      -- AAAA-MM-JJ : publication à partir du (deadline = jusqu'au)
+--   ALTER TABLE collabs ADD COLUMN key_messages TEXT;   -- 3 messages clés, une ligne chacun
+--   ALTER TABLE collabs ADD COLUMN caption TEXT;        -- légende modèle, à copier
+--   ALTER TABLE collabs ADD COLUMN stats_keys TEXT;     -- captures de stats (JSON : [{key, at}])
+--   ALTER TABLE collabs ADD COLUMN counts_at TEXT;      -- dernière mise à jour des compteurs par max
+-- Sur une base neuve, ces colonnes se créent avec les ALTER ci-dessus après le CREATE (voir README).
+
+-- Le kit : logo, visuels, captures d'app que max dépose. collab_id NULL = pour toutes les créatrices.
+CREATE TABLE IF NOT EXISTS kit_files (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  collab_id INTEGER,
+  name TEXT NOT NULL,
+  key TEXT NOT NULL,           -- clé R2 : kit/shared/… ou kit/<collab>/…
+  size INTEGER NOT NULL DEFAULT 0,
+  content_type TEXT,
+  hidden INTEGER NOT NULL DEFAULT 0,   -- retiré par max (jamais de DELETE)
+  created_at TEXT NOT NULL
+);
+
+-- Les réglages du tableau de bord (20/11/2026) : reminders = on/off (le tour automatique du matin), et ce qui viendra.
+CREATE TABLE IF NOT EXISTS settings (
+  key TEXT PRIMARY KEY,
+  value TEXT,
+  updated_at TEXT NOT NULL
+);

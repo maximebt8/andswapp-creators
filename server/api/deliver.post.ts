@@ -23,8 +23,10 @@ export default defineEventHandler(async (event) => {
 
   if (!['approved', 'published'].includes(collab.status)) throw createError({ statusCode: 409, statusMessage: 'not approved yet' })
   if (!/^https?:\/\//.test(url)) throw createError({ statusCode: 400, statusMessage: 'need a link' })
+  // La liste de contrôle cochée avant « Mark as live » : gardée telle quelle dans l'événement, pour max.
+  const checklist = Array.isArray(body.checklist) ? body.checklist.map((item: unknown) => text(item, 120)).filter(Boolean).slice(0, 8) : []
   await env.DB.prepare("UPDATE collabs SET status = 'published', published_url = ?2, published_at = COALESCE(published_at, ?3) WHERE id = ?1").bind(collab.id, url, now()).run()
-  await logEvent(env.DB, 'published', { creator: me.id, collab: collab.id }, { url })
+  await logEvent(env.DB, 'published', { creator: me.id, collab: collab.id }, { url, checklist })
   await tellMax(env, `${me.name} a publié « ${collab.title} »`, [`C'est en ligne : ${url}`, '', adminLink])
   return { ok: true, status: 'published' }
 })

@@ -34,7 +34,7 @@ export default defineEventHandler(async (event) => {
   if (action === 'counts') {
     const signups = Math.max(0, int(body.signups, collab.signups))
     const waitlist = Math.max(0, int(body.waitlist, collab.waitlist))
-    await env.DB.prepare('UPDATE collabs SET signups = ?2, waitlist = ?3 WHERE id = ?1').bind(collab.id, signups, waitlist).run()
+    await env.DB.prepare('UPDATE collabs SET signups = ?2, waitlist = ?3, counts_at = ?4 WHERE id = ?1').bind(collab.id, signups, waitlist, now()).run()
     await logEvent(env.DB, 'counts_set', ids, { signups, waitlist })
     return { ok: true, money: payout({ ...collab, signups, waitlist }) }
   }

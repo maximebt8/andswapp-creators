@@ -39,7 +39,7 @@ const initials = computed(() => props.name.split(' ').map((w) => w[0]).filter(Bo
         <div class="ml-auto flex items-center gap-3">
           <slot name="actions" />
           <NuxtLink v-if="name" :to="`${base}/profile`" class="flex items-center gap-2">
-            <span class="text-[13px] font-semibold text-gray-800">{{ name }}</span>
+            <span class="hidden text-[13px] font-semibold text-gray-800 sm:inline">{{ name }}</span>
             <span class="flex h-8 w-8 items-center justify-center rounded-full bg-green-light/60 text-[12px] font-bold text-green-dark">{{ initials }}</span>
           </NuxtLink>
         </div>

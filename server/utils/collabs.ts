@@ -4,6 +4,8 @@ export type CollabRow = {
   id: number; creator_id: number; title: string; status: string; currency: string; fixed_amount: number; boost_pct: number; per_signup: number; per_waitlist: number; cap_variable: number
   deliverables: string | null; brief: string | null; deadline: string | null; offered_at: string; accepted_at: string | null; draft_key: string | null; draft_url: string | null; draft_note: string | null; draft_at: string | null
   feedback: string | null; approved_at: string | null; published_url: string | null; published_at: string | null; signups: number; waitlist: number; invoice_key: string | null; invoice_at: string | null; paid_at: string | null; paid_amount: number | null; created_at: string
+  // Lot 1 (20/11/2026) : dates en clair, messages clés, légende modèle, captures de stats, dernière mise à jour des compteurs.
+  draft_due: string | null; post_from: string | null; key_messages: string | null; caption: string | null; stats_keys: string | null; counts_at: string | null
 }
 
 export async function collabsOf(db: D1Database, creatorId: number) {

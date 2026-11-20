@@ -9,6 +9,15 @@ Le statut d'une collab avance dans un seul sens : `offered` → `accepted` → `
 
 Ce que vaut une collab : fixe + boost pub (en % du fixe) + variable (inscrits × prix + liste d'attente × prix, plafonné). Le calcul vit dans `shared/utils/collab.ts`, lu des deux côtés.
 
+## Lot 1 de la V2 (20/11/2026)
+
+- Chaque collab porte des dates en clair (`draft_due`, `post_from`, `deadline`), 3 messages clés, une légende modèle. La créatrice les lit « Tue 1 Dec », jamais en ISO (`shared/utils/dates.ts`). Chaque tâche de son tableau de bord a sa date et son bouton.
+- Le kit (logo, visuels, captures) se dépose dans `/admin` (pour toutes) ou sur la page d'une collab (pour elle seule) : table `kit_files`, clés R2 `kit/…`, jamais de DELETE (`hidden = 1`).
+- Avant « Mark as live », trois cases à cocher (label partenariat payé, lien en bio et sticker, post public) ; la liste part avec le lien dans `events`. Après publication, elle dépose ses captures de stats (`collabs.stats_keys`).
+- Les rappels : `POST /api/admin/tick` relit chaque collab, écrit les relances dans `outbox` (rien ne part sans le clic de max) et envoie à max le résumé. Le workflow GitHub `rappels` l'appelle chaque matin vers 8 h, mais le tour ne fait rien tant que l'interrupteur « Tour automatique » de `/admin` est éteint (table `settings`, clé `reminders`). « Fais le tour maintenant » passe outre.
+- Sans clé Brevo, la file propose « Copie le texte » puis « Parti d'Outlook » (statut `sent`, `error = 'outlook'`) pour que les rappels sachent ce qui est parti.
+- Limite d'envoi de fichier : 100 Mo (requête Cloudflare), au-delà un lien.
+
 ## Règles
 
 - Sur invitation : max crée la fiche dans `/admin`, le site prépare le mail d'invitation avec le lien perso, max clique « Envoie ». Le lien perso (`/c/<id>.<signature>`, HMAC avec `ADMIN_KEY`) est la connexion : qui a le lien est la personne.
@@ -42,7 +51,7 @@ Le workflow `mise-en-ligne` (onglet Actions, à la demande) construit `main` dan
 
 À la main : `npm run deploy`.
 
-Première mise en ligne : créer le projet Pages `andswapp-creators` (le premier `wrangler pages deploy` le crée), poser les secrets dans Cloudflare, exécuter `schema.sql` sur la base de prod (`npx wrangler d1 execute andswapp-creators --remote --file schema.sql`), puis déclarer le domaine `creators.andswapp.com` sur le projet Pages (le workflow le fait) ; le DNS d'andswapp.com est chez GoDaddy : CNAME `creators` vers `andswapp-creators.pages.dev`, comme `alumni`.
+Première mise en ligne : créer le projet Pages `andswapp-creators` (le premier `wrangler pages deploy` le crée), poser les secrets dans Cloudflare, exécuter `schema.sql` sur la base de prod (`npx wrangler d1 execute andswapp-creators --remote --file schema.sql`), ajouter les colonnes du lot 1 (les `ALTER TABLE` listés en tête de `schema.sql`), puis déclarer le domaine `creators.andswapp.com` sur le projet Pages (le workflow le fait) ; le DNS d'andswapp.com est chez GoDaddy : CNAME `creators` vers `andswapp-creators.pages.dev`, comme `alumni`.
 
 ## Pièges connus
 
