@@ -1,0 +1,23 @@
+# Le tour des rappels, chaque matin vers 8 h (Paris) : le site relit les collabs, écrit les relances dans la file (rien ne
+# part vers une créatrice sans le clic « Envoie » de max) et envoie à max le résumé de ce qui l'attend.
+# Ne fait rien tant que l'interrupteur « Tour automatique chaque matin » du tableau de bord est éteint.
+# La clé du tableau de bord vit dans les secrets du dépôt (ADMIN_KEY), la même que pour la mise en ligne.
+name: rappels
+on:
+  schedule:
+    - cron: '0 7 * * *'
+  workflow_dispatch:
+concurrency:
+  group: rappels
+  cancel-in-progress: false
+jobs:
+  tour:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Le tour
+        env:
+          K: ${{ secrets.ADMIN_KEY }}
+        run: |
+          [ -n "$K" ] || { echo "::error::Secret ADMIN_KEY manquant dans le dépôt."; exit 1; }
+          curl -fsS -X POST https://creators.andswapp.com/api/admin/tick -H "x-admin-key: $K" -H 'content-type: application/json' --data '{}' | jq .

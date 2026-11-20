@@ -1,6 +1,7 @@
 <script setup>
-// Une collab vue par max : le brouillon à relire, les gestes (retouche, valide, compteurs, relevé, payée), la fiche de
-// la créatrice avec ses coordonnées de virement, les mails liés. Les échanges restent par mail (max, 18/11).
+// Une collab vue par max : le brouillon à relire, les gestes (retouche, valide, compteurs, relevé, payée), les dates,
+// le kit de la collab, les captures de stats, la fiche de la créatrice avec ses coordonnées de virement, les mails liés.
+// Les échanges restent par mail (max, 18/11).
 import { money } from '~~/shared/utils/collab'
 
 const route = useRoute()
@@ -8,6 +9,7 @@ const id = computed(() => Number(route.params.id))
 const { data, error, refresh } = await useFetch('/api/admin/collab', { query: { id, k: route.query.k }, key: () => `collab-${id.value}` })
 const c = computed(() => data.value?.collab)
 const k = computed(() => data.value?.creator)
+const kit = computed(() => data.value?.kit ?? [])
 useHead({ title: () => (c.value ? `${k.value?.name} · ${c.value.title}` : 'Collab') })
 
 const busy = ref('')
@@ -35,7 +37,7 @@ watchEffect(() => {
 })
 const edit = reactive({})
 const openEdit = () => {
-  Object.assign(edit, { id: c.value.id, creator_id: c.value.creator_id, title: c.value.title, currency: c.value.currency, fixed_amount: c.value.fixed_amount, boost_pct: c.value.boost_pct, per_signup: c.value.per_signup, per_waitlist: c.value.per_waitlist, cap_variable: c.value.cap_variable, deliverables: c.value.deliverables, deadline: c.value.deadline, brief: c.value.brief })
+  Object.assign(edit, { id: c.value.id, creator_id: c.value.creator_id, title: c.value.title, currency: c.value.currency, fixed_amount: c.value.fixed_amount, boost_pct: c.value.boost_pct, per_signup: c.value.per_signup, per_waitlist: c.value.per_waitlist, cap_variable: c.value.cap_variable, deliverables: c.value.deliverables, deadline: c.value.deadline, draft_due: c.value.draft_due, post_from: c.value.post_from, key_messages: c.value.key_messages, caption: c.value.caption, brief: c.value.brief })
   f.edit = true
 }
 const saveEdit = () => run('edit', async () => {
@@ -43,7 +45,15 @@ const saveEdit = () => run('edit', async () => {
   f.edit = false
 })
 const sendMail = (m) => run(`send-${m.id}`, () => $fetch('/api/admin/outbox', { method: 'POST', body: { id: m.id, action: 'send' } }))
+const outlookMail = (m) => run(`outlook-${m.id}`, () => $fetch('/api/admin/outbox', { method: 'POST', body: { id: m.id, action: 'outlook' } }))
+const copy = (textToCopy) => navigator.clipboard?.writeText(textToCopy)
+const addKit = (files) =>
+  run('kit', async () => {
+    for (const file of files) await $fetch(`/api/admin/kit?${new URLSearchParams({ name: file.name, collab: String(id.value) })}`, { method: 'PUT', body: file, headers: { 'content-type': file.type || 'application/octet-stream' } })
+  })
+const hideKit = (file) => run(`kit-${file.id}`, () => $fetch('/api/admin/kit', { method: 'POST', body: { id: file.id, hidden: true } }))
 const day = (iso) => (iso ? new Date(iso).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '')
+const jour = (d) => (d ? new Date(d.slice(0, 10) + 'T00:00:00Z').toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' }) : '')
 const media = (key) => `/api/media?key=${encodeURIComponent(key)}`
 const isVideo = (key) => /\.(mp4|mov|webm|m4v)$/i.test(key ?? '')
 </script>
@@ -66,9 +76,10 @@ const isVideo = (key) => /\.(mp4|mov|webm|m4v)$/i.test(key ?? '')
             </div>
             <StatusPill :status="c.status" lang="fr" />
           </div>
-          <p class="mt-2 text-[14px] text-gray-700">{{ c.deliverables }} · {{ money(c.fixed_amount, c.currency) }} fixe<span v-if="c.boost_pct"> + {{ c.boost_pct }} % boost</span><span v-if="c.per_signup"> + {{ money(c.per_signup, c.currency) }}/inscrit<span v-if="c.per_waitlist">, {{ money(c.per_waitlist, c.currency) }}/liste</span><span v-if="c.cap_variable">, plafond {{ money(c.cap_variable, c.currency) }}</span></span><span v-if="c.deadline"> · pour le {{ c.deadline }}</span></p>
+          <p class="mt-2 text-[14px] text-gray-700">{{ c.deliverables }} · {{ money(c.fixed_amount, c.currency) }} fixe<span v-if="c.boost_pct"> + {{ c.boost_pct }} % boost</span><span v-if="c.per_signup"> + {{ money(c.per_signup, c.currency) }}/inscrit<span v-if="c.per_waitlist">, {{ money(c.per_waitlist, c.currency) }}/liste</span><span v-if="c.cap_variable">, plafond {{ money(c.cap_variable, c.currency) }}</span></span></p>
+          <p class="mt-1 text-[14px] text-gray-700"><span v-if="c.draft_due">Brouillon pour le <b>{{ jour(c.draft_due) }}</b></span><span v-if="c.deadline || c.post_from"><span v-if="c.draft_due"> · </span>Publier <b>{{ c.post_from && c.deadline ? `du ${jour(c.post_from)} au ${jour(c.deadline)}` : c.deadline ? `avant le ${jour(c.deadline)}` : `à partir du ${jour(c.post_from)}` }}</b></span><span v-if="!c.draft_due && !c.deadline && !c.post_from" class="text-gray-500">Pas de dates : ajoute-les, elle les voit en tête de sa page.</span></p>
           <p class="mt-1 text-[13px] text-gray-500">Offre le {{ day(c.offered_at) }}<span v-if="c.accepted_at"> · acceptée le {{ day(c.accepted_at) }}</span><span v-if="c.published_at"> · publiée le {{ day(c.published_at) }}</span><span v-if="c.paid_at"> · payée le {{ day(c.paid_at) }}</span></p>
-          <button class="mt-2 text-[13px] text-green-dark underline" @click="f.edit ? (f.edit = false) : openEdit()">{{ f.edit ? 'Fermer' : 'Modifier l\'offre ou le brief' }}</button>
+          <button class="mt-2 text-[13px] text-green-dark underline" @click="f.edit ? (f.edit = false) : openEdit()">{{ f.edit ? 'Fermer' : 'Modifier l\'offre, les dates ou le brief' }}</button>
           <form v-if="f.edit" class="mt-3 grid gap-2 rounded-xl bg-base-200 p-3 md:grid-cols-3" @submit.prevent="saveEdit">
             <input v-model="edit.title" class="input-soft md:col-span-2" />
             <select v-model="edit.currency" class="input-soft"><option>GBP</option><option>EUR</option><option>USD</option></select>
@@ -77,15 +88,29 @@ const isVideo = (key) => /\.(mp4|mov|webm|m4v)$/i.test(key ?? '')
             <label class="text-[13px]">Par inscrit<input v-model.number="edit.per_signup" type="number" step="0.5" class="input-soft" /></label>
             <label class="text-[13px]">Par liste<input v-model.number="edit.per_waitlist" type="number" step="0.5" class="input-soft" /></label>
             <label class="text-[13px]">Plafond<input v-model.number="edit.cap_variable" type="number" class="input-soft" /></label>
-            <label class="text-[13px]">Date<input v-model="edit.deadline" type="date" class="input-soft" /></label>
-            <input v-model="edit.deliverables" class="input-soft md:col-span-3" />
-            <textarea v-model="edit.brief" rows="10" class="input-soft md:col-span-3"></textarea>
+            <input v-model="edit.deliverables" placeholder="Livrables" class="input-soft self-end" />
+            <label class="text-[13px]">Brouillon pour le<input v-model="edit.draft_due" type="date" class="input-soft" /></label>
+            <label class="text-[13px]">Publier à partir du<input v-model="edit.post_from" type="date" class="input-soft" /></label>
+            <label class="text-[13px]">Publier jusqu'au<input v-model="edit.deadline" type="date" class="input-soft" /></label>
+            <textarea v-model="edit.key_messages" rows="3" placeholder="3 messages clés, un par ligne" class="input-soft md:col-span-3"></textarea>
+            <textarea v-model="edit.caption" rows="4" placeholder="Légende modèle (optionnel)" class="input-soft md:col-span-3"></textarea>
+            <textarea v-model="edit.brief" rows="10" placeholder="Le brief" class="input-soft md:col-span-3"></textarea>
             <div class="md:col-span-3"><button type="submit" class="btn-swapp px-5 py-2 text-[14px]" :disabled="!!busy">Garder</button></div>
           </form>
-          <div v-else-if="c.brief" class="mt-3">
-            <p class="label-soft">Brief</p>
-            <div class="mt-1 whitespace-pre-wrap text-[14px] leading-relaxed text-gray-700">{{ c.brief }}</div>
-          </div>
+          <template v-else>
+            <div v-if="c.key_messages" class="mt-3">
+              <p class="label-soft">Messages clés</p>
+              <div class="mt-1 whitespace-pre-wrap text-[14px] text-gray-700">{{ c.key_messages }}</div>
+            </div>
+            <div v-if="c.caption" class="mt-3">
+              <p class="label-soft">Légende modèle</p>
+              <div class="mt-1 whitespace-pre-wrap text-[14px] text-gray-700">{{ c.caption }}</div>
+            </div>
+            <div v-if="c.brief" class="mt-3">
+              <p class="label-soft">Brief</p>
+              <div class="mt-1 whitespace-pre-wrap text-[14px] leading-relaxed text-gray-700">{{ c.brief }}</div>
+            </div>
+          </template>
         </section>
 
         <!-- Le brouillon -->
@@ -105,14 +130,16 @@ const isVideo = (key) => /\.(mp4|mov|webm|m4v)$/i.test(key ?? '')
           </div>
         </section>
 
-        <!-- Publié, compteurs, paiement -->
+        <!-- Publié, stats, compteurs, paiement -->
         <section class="card-soft">
           <p class="label-soft">Suivi et paiement</p>
           <p v-if="c.published_url" class="mt-1 text-[14px]">Post : <a :href="c.published_url" target="_blank" rel="noopener" class="text-green-dark underline">{{ c.published_url }}</a></p>
+          <p v-if="c.stats?.length" class="mt-1 text-[14px]">Captures de stats : <span v-for="(s, i) in c.stats" :key="s.key"><a :href="media(s.key) + '&download=1'" class="text-green-dark underline">{{ day(s.at) }}</a><span v-if="i < c.stats.length - 1">, </span></span></p>
           <div class="mt-3 flex flex-wrap items-end gap-2">
             <label class="text-[13px]">Inscrits via son lien<input v-model.number="f.signups" type="number" min="0" class="input-soft w-28" /></label>
             <label class="text-[13px]">Liste d'attente<input v-model.number="f.waitlist" type="number" min="0" class="input-soft w-28" /></label>
             <button class="btn-swapp-white px-4 py-2 text-[13px]" :disabled="!!busy" @click="act('counts', { signups: f.signups, waitlist: f.waitlist })">Mets à jour</button>
+            <span class="text-[12px] text-gray-500">{{ c.counts_at ? `dernière mise à jour le ${day(c.counts_at)}` : 'jamais mis à jour (elle le voit)' }}</span>
           </div>
           <p class="mt-3 text-[15px]">Vaut <b>{{ money(c.money.total, c.currency) }}</b> <span class="text-[13px] text-gray-500">({{ money(c.money.fixed, c.currency) }} fixe<span v-if="c.money.boost"> + {{ money(c.money.boost, c.currency) }} boost</span> + {{ money(c.money.variable, c.currency) }} variable{{ c.money.capped ? ', plafonné' : '' }})</span></p>
           <p v-if="c.invoice_key" class="mt-1 text-[14px]">Facture reçue le {{ day(c.invoice_at) }} : <a :href="media(c.invoice_key) + '&download=1'" class="text-green-dark underline">ouvrir</a></p>
@@ -129,22 +156,39 @@ const isVideo = (key) => /\.(mp4|mov|webm|m4v)$/i.test(key ?? '')
             <button v-if="c.status === 'declined'" class="px-3 py-2 text-[13px] text-gray-500 underline" :disabled="!!busy" @click="act('reopen')">Rouvre</button>
           </div>
         </section>
-
       </div>
 
       <aside class="space-y-6">
         <section class="card-soft">
           <p class="label-soft">Son espace</p>
           <p class="mt-1 break-all text-[13px]"><a :href="data.link" target="_blank" rel="noopener" class="text-green-dark underline">{{ data.link }}</a></p>
-          <p class="mt-2 text-[13px] text-gray-500">{{ k?.email }}<span v-if="k?.city"> · {{ k.city }}</span><span v-if="k?.code"> · utm_source={{ k.code }}</span><span v-if="k?.last_seen"> · vue le {{ day(k.last_seen) }}</span></p>
+          <p class="mt-2 text-[13px] text-gray-500">{{ k?.email }}<span v-if="k?.city"> · {{ k.city }}</span><span v-if="k?.code"> · utm_source={{ k.code }}</span> · {{ k?.last_seen ? `vue le ${day(k.last_seen)}` : 'jamais venue' }}</p>
           <p v-if="k?.notes" class="mt-2 whitespace-pre-wrap text-[13px] text-gray-600">{{ k.notes }}</p>
+        </section>
+        <section class="card-soft">
+          <div class="flex items-center justify-between gap-2">
+            <p class="label-soft">Kit de cette collab</p>
+            <label class="btn-swapp-white cursor-pointer px-3 py-1.5 text-[12px]">{{ busy === 'kit' ? 'Dépôt…' : 'Ajoute' }}<input type="file" multiple class="hidden" @change="$event.target.files.length && addKit([...$event.target.files])" /></label>
+          </div>
+          <ul class="mt-2 space-y-1.5 text-[13px]">
+            <li v-for="file in kit" :key="file.id" class="flex items-center gap-2">
+              <a :href="media(file.key) + '&download=1'" class="min-w-0 flex-1 truncate text-green-dark underline">{{ file.name }}</a>
+              <span class="shrink-0 text-[11px] text-gray-500">{{ file.collab_id ? file.size_text : 'commun' }}</span>
+              <button v-if="file.collab_id" class="shrink-0 text-[12px] text-gray-500 underline" :disabled="!!busy" @click="hideKit(file)">Retire</button>
+            </li>
+          </ul>
+          <p v-if="!kit.length" class="mt-1 text-[13px] text-gray-400">Rien. Le kit commun se dépose sur <NuxtLink to="/admin" class="underline">le tableau de bord</NuxtLink>.</p>
         </section>
         <section class="card-soft">
           <p class="label-soft">Mails de cette collab</p>
           <div v-for="m in data.outbox" :key="m.id" class="mt-2 border-t border-gray-100 pt-2 text-[13px]">
-            <p><span class="pill" :class="m.status === 'held' ? 'bg-yellow/40 text-green-dark' : m.status === 'sent' ? 'bg-gray-200 text-gray-700' : 'bg-orange-100 text-orange-800'">{{ m.status === 'held' ? 'à envoyer' : m.status === 'sent' ? 'parti' : m.status }}</span> {{ m.subject }}</p>
+            <p><span class="pill" :class="m.status === 'held' ? 'bg-yellow/40 text-green-dark' : m.status === 'sent' ? 'bg-gray-200 text-gray-700' : 'bg-orange-100 text-orange-800'">{{ m.status === 'held' ? 'à envoyer' : m.status === 'sent' ? (m.error === 'outlook' ? 'parti d\'Outlook' : 'parti') : m.status }}</span> {{ m.subject }}</p>
             <p class="text-[12px] text-gray-500">{{ day(m.sent_at || m.created_at) }}</p>
-            <button v-if="m.status === 'held'" class="mt-1 btn-swapp px-3 py-1 text-[12px]" :disabled="!!busy" @click="sendMail(m)">Envoie</button>
+            <div v-if="m.status === 'held'" class="mt-1 flex flex-wrap gap-1.5">
+              <button class="btn-swapp-white px-3 py-1 text-[12px]" @click="copy(`${m.subject}\n\n${m.body}`)">Copie le texte</button>
+              <button class="btn-swapp-white px-3 py-1 text-[12px]" :disabled="!!busy" @click="outlookMail(m)">Parti d'Outlook</button>
+              <button class="btn-swapp px-3 py-1 text-[12px]" :disabled="!!busy" @click="sendMail(m)">Envoie</button>
+            </div>
           </div>
           <p v-if="!data.outbox?.length" class="mt-1 text-[13px] text-gray-400">Aucun.</p>
           <p class="mt-2 text-[12px] text-gray-500">Pour relire ou corriger un mail avant envoi : <NuxtLink to="/admin" class="underline">la file</NuxtLink>.</p>

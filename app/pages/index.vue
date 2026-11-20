@@ -28,14 +28,14 @@ const send = async () => {
         <div class="card-soft mt-8">
           <p class="label-soft">Lost your link?</p>
           <template v-if="state !== 'done'">
-            <p class="mt-1 text-[14px] text-gray-600">Type the email you used with us. We will send your link again.</p>
+            <p class="mt-1 text-[14px] text-gray-600">Enter the email you used with us. Max will send your link again, usually within a day.</p>
             <form class="mt-3 flex flex-col gap-2 sm:flex-row" @submit.prevent="send">
               <input v-model="email" type="email" required placeholder="you@example.com" class="input-soft" />
-              <button type="submit" class="btn-swapp px-5 py-2.5 text-[14px]" :disabled="state === 'sending'">Send my link</button>
+              <button type="submit" class="btn-swapp px-5 py-2.5 text-[14px]" :disabled="state === 'sending'">Ask for my link</button>
             </form>
             <p v-if="state === 'error'" class="mt-2 text-[13px] text-error">Something went wrong. Try again, or write to hello@andswapp.com.</p>
           </template>
-          <p v-else class="mt-1 text-[14px] text-green-dark">Done. If this email is in our list, your link is on its way.</p>
+          <p v-else class="mt-1 text-[14px] text-green-dark">Done. If this email is in our list, Max will send your link shortly.</p>
         </div>
 
         <p class="mt-10 text-[13px] text-gray-400">&Swapp · <a href="https://andswapp.com" class="underline">andswapp.com</a></p>
